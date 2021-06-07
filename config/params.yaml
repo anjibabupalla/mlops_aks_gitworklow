@@ -1,0 +1,26 @@
+base:
+  project: Wafer-Quality-Project
+  random_state: 42
+  target_col: TARGET
+
+data_source:
+  raw_data_set:  data/raw/winequality.csv
+
+load_data:
+  processed_data_set:  data/processed/winequality.csv
+ 
+split_data:
+  train_path: data/interim/train_winequality.csv
+  test_path: data/interim/test_winequality.csv
+  test_size: 0.25
+
+estimators:
+ ElasticNet:
+  params:
+      alpha: 0.88
+      l1_ratio: 0.66
+
+saved_models:
+  model_dir: models
+
+webapp_model_dir: models/model.joblib
