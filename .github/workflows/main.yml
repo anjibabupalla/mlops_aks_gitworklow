@@ -48,7 +48,7 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: ${{ env.CLUSTER_NAME }}
-        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+        resource-group: ${{ env.resourceGroup }}
 
         # Create namespace if doesn't exist
     - run: |
@@ -68,7 +68,7 @@ jobs:
       with:
         manifests: |
           kube/deployment-dev.yaml
-          kue/deployment-service-dev.yaml
+          kube/deployment-service-dev.yaml
         images: |
           ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
         #imagepullsecrets: |
