@@ -6,8 +6,8 @@ env:
  resourceGroup: 'mlops'
  kubernetesVersion: '1.19.11'
  REGISTRY_NAME: 'azuremlopslearnacr'
- NAMESPACE: '' 
- CLUSTER_NAME: ''
+ NAMESPACE: 'winequality' 
+ CLUSTER_NAME: 'mlopsaks'
  
 # Controls when the action will run. 
 on:
@@ -44,9 +44,33 @@ jobs:
     - run: |
             docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
             docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }} 
-    
-    
-    
-    
-    
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
 
+        # Create namespace if doesn't exist
+    - run: |
+            kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+
+        # Create image pull secret for ACR
+    - uses: azure/k8s-create-secret@v1
+      with:
+       container-registry-url: ${{ env.REGISTRY_NAME }}.azurecr.io
+       container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
+       container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}       
+       namespace: ${{ env.NAMESPACE }}
+       force: true
+    
+    # Deploy app to AKS
+    - uses: azure/k8s-deploy@v1
+      with:
+        manifests: |
+          kube/deployment-dev.yaml
+          kue/deployment-service-dev.yaml
+        images: |
+          ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+        #imagepullsecrets: |
+         # ${{ env.SECRET }}
+        namespace: ${{ env.NAMESPACE }}
