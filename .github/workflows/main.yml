@@ -5,7 +5,7 @@ env:
  name: 'mlops_aks_gitworklow'
  resourceGroup: 'mlops'
  kubernetesVersion: '1.19.11'
- REGISTRY_NAME: ''
+ REGISTRY_NAME: 'azuremlopslearnacr'
  NAMESPACE: ''
  APP_NAME: ''
  CLUSTER_NAME: ''
