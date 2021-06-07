@@ -2,12 +2,11 @@
 
 name: CI
 env:
- name: 'mlops_aks_gitworklow'
+ APP_NAME: 'mlops_aks_gitworklow'
  resourceGroup: 'mlops'
  kubernetesVersion: '1.19.11'
  REGISTRY_NAME: 'azuremlopslearnacr'
- NAMESPACE: ''
- APP_NAME: ''
+ NAMESPACE: '' 
  CLUSTER_NAME: ''
  
 # Controls when the action will run. 
